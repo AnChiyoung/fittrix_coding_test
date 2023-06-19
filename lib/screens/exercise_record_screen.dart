@@ -10,6 +10,20 @@ class ExerciseRecordScreen extends StatefulWidget {
 class _ExerciseRecordScreenState extends State<ExerciseRecordScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(color: Colors.red);
+    return Stack(
+      children: [
+        Container(),
+        Align(
+          alignment: Alignment.topLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 20.0, left: 20.0),
+            child: GestureDetector(
+              onTap: () {},
+              child: const Icon(Icons.arrow_back),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

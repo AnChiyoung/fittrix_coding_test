@@ -18,15 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         color: Colors.white,
         child: const Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              LoginInputField(),
-              SizedBox(height: 4),
-              LoginButton(),
-            ],
-          ),
-        )
+          child: LoginAndOutField(),
+        ),
       ),
     );
   }

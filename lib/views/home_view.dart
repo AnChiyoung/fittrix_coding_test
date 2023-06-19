@@ -1,10 +1,16 @@
+import 'package:fittrix_coding_test/constants/login_guide.dart';
+import 'package:fittrix_coding_test/models/login_model.dart';
+import 'package:fittrix_coding_test/provider/login_provider.dart';
 import 'package:fittrix_coding_test/screens/exercise_history_screen.dart';
 import 'package:fittrix_coding_test/screens/exercise_record_screen.dart';
 import 'package:fittrix_coding_test/screens/login_screen.dart';
+import 'package:fittrix_coding_test/screens/video_play_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class MovePageList {
   List<Widget> pageList = [
+    VideoPlayScreen(),
     ExerciseRecordScreen(),
     ExerciseHistoryScreen(),
     LoginScreen(),
@@ -25,7 +31,7 @@ class _BottomMenuState extends State<BottomMenu> {
 
   @override
   void initState() {
-    pageIndex = 0;
+    pageIndex = 1;
     super.initState();
   }
 
@@ -43,29 +49,50 @@ class _BottomMenuState extends State<BottomMenu> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (index) {
-
-
-          if(index == 0) {
-
+          if(index == 0 || index == 1) {
+            if(LoginToken.loginToken.isEmpty) {
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return LoginGuide(loginState: false);
+                  }
+              );
+            } else {
+              widget.selectPageCallback(index);
+              pageIndex = index;
+              context.read<LoginProvider>().loginButtonStateChange(false, '');
+            }
           } else {
             widget.selectPageCallback(index);
             pageIndex = index;
           }
-
         },
       ),
     );
   }
 
+  void selectRecordType(int index) {
+    print(index);
+  }
+
   List<BottomNavigationBarItem> bottomNavigationMenu = [
-    const BottomNavigationBarItem(icon: ExerciseRecordPopupButton(), label: '운동 기록 하기'),
+    BottomNavigationBarItem(icon: ExerciseRecordPopupButton(), label: '운동 기록 하기'),
     BottomNavigationBarItem(icon: BottomNavigationTextItem(title: '운동 기록 보기'), label: '운동 기록 보기'),
     BottomNavigationBarItem(icon: BottomNavigationTextItem(title: '로그인'), label: '로그인'),
   ];
 }
 
+enum RecordType {
+  exercise01,
+  exercise02,
+  exercise03,
+  exercise04,
+}
+
 class ExerciseRecordPopupButton extends StatefulWidget {
-  const ExerciseRecordPopupButton({super.key});
+  // Function selectCallback;
+  ExerciseRecordPopupButton({super.key, });
 
   @override
   State<ExerciseRecordPopupButton> createState() => _ExerciseRecordPopupButtonState();
@@ -83,20 +110,35 @@ class _ExerciseRecordPopupButtonState extends State<ExerciseRecordPopupButton> {
         offset: Offset(15.0, bottomHeight),
         itemBuilder: (_) {
           return [
-            popupItemRow('런지'),
-            popupItemRow('스쿼트'),
-            popupItemRow('푸시업'),
-            popupItemRow('레그 레이즈'),
+            popupItemRow(RecordType.exercise01.toString()),
+            popupItemRow(RecordType.exercise02.toString()),
+            popupItemRow(RecordType.exercise03.toString()),
+            popupItemRow(RecordType.exercise04.toString()),
           ];
         },
-        icon: Text('운동 기록 하기'),
+        icon: const Text('운동 기록 하기'),
+        onSelected: (value) {
+          // widget.selectCallback(value);
+        }
       ),
     );
   }
 
   PopupMenuItem popupItemRow(String title) {
+    String setTitle = '';
+    if(title == RecordType.exercise01.toString()) {
+      setTitle = '런지';
+    } else if(title == RecordType.exercise02.toString()) {
+      setTitle = '스쿼트';
+    } else if(title == RecordType.exercise03.toString()) {
+      setTitle = '푸시업';
+    } else if(title == RecordType.exercise04.toString()) {
+      setTitle = '레그 레이즈';
+    }
+
     return PopupMenuItem<String>(
-      child: Text(title),
+      value: title,
+      child: Text(setTitle),
     );
   }
 }

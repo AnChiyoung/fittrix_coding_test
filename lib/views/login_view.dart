@@ -1,7 +1,35 @@
+import 'package:fittrix_coding_test/constants/login_guide.dart';
 import 'package:fittrix_coding_test/constants/validate.dart';
+import 'package:fittrix_coding_test/models/login_model.dart';
 import 'package:fittrix_coding_test/provider/login_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+class LoginAndOutField extends StatelessWidget {
+  const LoginAndOutField({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<LoginProvider>(
+      builder: (context, data, child) {
+        if(data.loginState == true) {
+          return LogoutField();
+        } else if(data.loginState == false) {
+          return const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              LoginInputField(),
+              SizedBox(height: 4),
+              LoginButton(),
+            ],
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
+  }
+}
 
 class LoginInputField extends StatefulWidget {
   const LoginInputField({super.key});
@@ -15,6 +43,7 @@ class _LoginInputFieldState extends State<LoginInputField> {
   TextEditingController loginFieldController = TextEditingController();
   FocusNode loginFieldFocusNode = FocusNode();
   bool buttonState = false;
+  String inputNumber = '';
 
   @override
   Widget build(BuildContext context) {
@@ -47,21 +76,21 @@ class _LoginInputFieldState extends State<LoginInputField> {
             border: InputBorder.none,
           ),
           validator: (value) {
-            if(TextFieldValidate().isNumericUsingRegularExpression(value.toString()) == false && value!.isNotEmpty) {
-              context.read<LoginProvider>().loginButtonStateChange(false);
-              return '숫자만 입력해 주세요';
-            } else {
-              if(value!.length > 4) {
-                context.read<LoginProvider>().loginButtonStateChange(true);
-                return null;
-              } else if(value.isEmpty){
-                context.read<LoginProvider>().loginButtonStateChange(false);
-                return null;
-              } else {
-                context.read<LoginProvider>().loginButtonStateChange(false);
-                return '5자리의 숫자를 입력해 주세요';
-              }
-            }
+            // if(TextFieldValidate().isNumericUsingRegularExpression(value.toString()) == false && value!.isNotEmpty) {
+            //   context.read<LoginProvider>().loginButtonStateChange(false);
+            //   return '숫자만 입력해 주세요';
+            // } else {
+            //   if(value!.length > 4) {
+            //     context.read<LoginProvider>().loginButtonStateChange(true);
+            //     return null;
+            //   } else if(value.isEmpty){
+            //     context.read<LoginProvider>().loginButtonStateChange(false);
+            //     return null;
+            //   } else {
+            //     context.read<LoginProvider>().loginButtonStateChange(false);
+            //     return '5자리의 숫자를 입력해 주세요';
+            //   }
+            // }
           },
           onChanged: (value) {
             if(TextFieldValidate().isNumericUsingRegularExpression(value.toString()) == false && value!.isNotEmpty) {
@@ -69,13 +98,14 @@ class _LoginInputFieldState extends State<LoginInputField> {
             } else {
               if(value!.length > 4) {
                 buttonState = true;
+                inputNumber = loginFieldController.text;
               } else if(value.isEmpty){
                 buttonState = false;
               } else {
                 buttonState = false;
               }
             }
-            context.read<LoginProvider>().loginButtonStateChange(buttonState);
+            context.read<LoginProvider>().loginButtonStateChange(buttonState, inputNumber);
           }
       ),
     );
@@ -97,7 +127,31 @@ class _LoginButtonState extends State<LoginButton> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: ElevatedButton(
-            onPressed: () {},
+            onPressed: () async {
+              /// button disable
+              if(data.loginButtonState == false) {
+              }
+              /// button enable
+              else if(data.loginButtonState == true) {
+                LoginResponseModel model = await LoginRequest().loginRequest(data.loginInputNumber);
+                /// login fail
+                if(model.loginToken == null) {
+                  print('login fail');
+                }
+                /// login success
+                else {
+                  LoginToken.loginToken = model.loginToken!;
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return LoginGuide(loginState: true);
+                    },
+                  );
+                  context.read<LoginProvider>().logintStateChange(true);
+                }
+              }
+            },
             style: ElevatedButton.styleFrom(
               elevation: 1.0,
               backgroundColor: data.loginButtonState == false ? Colors.grey : Colors.blue,
@@ -113,6 +167,40 @@ class _LoginButtonState extends State<LoginButton> {
           ),
         );
       }
+    );
+  }
+}
+
+class LogoutField extends StatefulWidget {
+  const LogoutField({Key? key}) : super(key: key);
+
+  @override
+  State<LogoutField> createState() => _LogoutFieldState();
+}
+
+class _LogoutFieldState extends State<LogoutField> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+      child: ElevatedButton(
+        onPressed: () {
+          LoginToken.loginToken = '';
+          context.read<LoginProvider>().logintStateChange(false);
+        },
+        style: ElevatedButton.styleFrom(
+          elevation: 1.0,
+          backgroundColor: Colors.blue,
+          textStyle: const TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.w400),
+        ),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20.0),
+          height: 55,
+          child: const Center(
+            child: Text('로그아웃'),
+          ),
+        ),
+      ),
     );
   }
 }

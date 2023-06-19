@@ -14,7 +14,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void movePage(int index) {
     setState(() {
-      pageIndex = index;
+      pageIndex = index + 1;
     });
   }
 
