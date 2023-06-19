@@ -40,8 +40,8 @@ class _BottomMenuState extends State<BottomMenu> {
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         onTap: (index) {
 
 
@@ -58,9 +58,9 @@ class _BottomMenuState extends State<BottomMenu> {
   }
 
   List<BottomNavigationBarItem> bottomNavigationMenu = [
-    const BottomNavigationBarItem(icon: SizedBox.shrink(), label: '운동 기록 하기'),
-    const BottomNavigationBarItem(icon: SizedBox.shrink(), label: '운동 기록 보기'),
-    const BottomNavigationBarItem(icon: SizedBox.shrink(), label: '로그인'),
+    const BottomNavigationBarItem(icon: ExerciseRecordPopupButton(), label: '운동 기록 하기'),
+    BottomNavigationBarItem(icon: BottomNavigationTextItem(title: '운동 기록 보기'), label: '운동 기록 보기'),
+    BottomNavigationBarItem(icon: BottomNavigationTextItem(title: '로그인'), label: '로그인'),
   ];
 }
 
@@ -72,20 +72,42 @@ class ExerciseRecordPopupButton extends StatefulWidget {
 }
 
 class _ExerciseRecordPopupButtonState extends State<ExerciseRecordPopupButton> {
+
+  double bottomHeight = -100.0;
+
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton(itemBuilder: (_) {
-      return const [
-        PopupMenuItem<String>(
-            child: Text('aa')
-        ),
-        PopupMenuItem<String>(
-            child: Text('aa')
-        ),
-        PopupMenuItem<String>(
-            child: Text('aa')
-        )
-      ];
-    });
+    return SizedBox(
+      width: double.infinity,
+      child: PopupMenuButton(
+        offset: Offset(15.0, bottomHeight),
+        itemBuilder: (_) {
+          return [
+            popupItemRow('런지'),
+            popupItemRow('스쿼트'),
+            popupItemRow('푸시업'),
+            popupItemRow('레그 레이즈'),
+          ];
+        },
+        icon: Text('운동 기록 하기'),
+      ),
+    );
+  }
+
+  PopupMenuItem popupItemRow(String title) {
+    return PopupMenuItem<String>(
+      child: Text(title),
+    );
   }
 }
+
+class BottomNavigationTextItem extends StatelessWidget {
+  String? title;
+  BottomNavigationTextItem({Key? key, this.title}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(title!);
+  }
+}
+
