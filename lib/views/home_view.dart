@@ -43,8 +43,15 @@ class _BottomMenuState extends State<BottomMenu> {
         showSelectedLabels: true,
         showUnselectedLabels: true,
         onTap: (index) {
-          widget.selectPageCallback(index);
-          pageIndex = index;
+
+
+          if(index == 0) {
+
+          } else {
+            widget.selectPageCallback(index);
+            pageIndex = index;
+          }
+
         },
       ),
     );
@@ -55,4 +62,30 @@ class _BottomMenuState extends State<BottomMenu> {
     const BottomNavigationBarItem(icon: SizedBox.shrink(), label: '운동 기록 보기'),
     const BottomNavigationBarItem(icon: SizedBox.shrink(), label: '로그인'),
   ];
+}
+
+class ExerciseRecordPopupButton extends StatefulWidget {
+  const ExerciseRecordPopupButton({super.key});
+
+  @override
+  State<ExerciseRecordPopupButton> createState() => _ExerciseRecordPopupButtonState();
+}
+
+class _ExerciseRecordPopupButtonState extends State<ExerciseRecordPopupButton> {
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton(itemBuilder: (_) {
+      return const [
+        PopupMenuItem<String>(
+            child: Text('aa')
+        ),
+        PopupMenuItem<String>(
+            child: Text('aa')
+        ),
+        PopupMenuItem<String>(
+            child: Text('aa')
+        )
+      ];
+    });
+  }
 }
