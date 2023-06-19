@@ -1,3 +1,4 @@
+import 'package:fittrix_coding_test/views/exercise_record_view.dart';
 import 'package:flutter/material.dart';
 
 class ExerciseRecordScreen extends StatefulWidget {
@@ -12,13 +13,15 @@ class _ExerciseRecordScreenState extends State<ExerciseRecordScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        Container(),
+        ExerciseRecordField(),
         Align(
           alignment: Alignment.topLeft,
           child: Padding(
             padding: const EdgeInsets.only(top: 20.0, left: 20.0),
             child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                /// route stack logic => 미완
+              },
               child: const Icon(Icons.arrow_back),
             ),
           ),

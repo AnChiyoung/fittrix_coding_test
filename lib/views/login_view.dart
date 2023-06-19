@@ -19,7 +19,9 @@ class LoginAndOutField extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               LoginInputField(),
-              SizedBox(height: 4),
+              SizedBox(height: 4.0),
+              LoginInputFieldValidate(),
+              SizedBox(height: 4.0),
               LoginButton(),
             ],
           );
@@ -47,67 +49,75 @@ class _LoginInputFieldState extends State<LoginInputField> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextFormField(
-          controller: loginFieldController,
-          autofocus: true,
-          focusNode: loginFieldFocusNode,
-          readOnly: false,
-          textInputAction: TextInputAction.next,
-          autovalidateMode: AutovalidateMode.always,
-          maxLines: 1,
-          maxLength: 5,
-          textAlignVertical: TextAlignVertical.center,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            counterText: '',
-            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xFF3E97FF), width: 1)),
-            focusedErrorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red, width: 1)),
-            errorBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.red, width: 1)),
-            filled: true,
-            fillColor: Color(0xFFF6F6F6),
-            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-            alignLabelWithHint: false,
-            labelText: '로그인 번호',
-            labelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
-            hintText: '로그인 번호를 입력해 주세요',
-            hintStyle: TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w400),
-            border: InputBorder.none,
-          ),
-          validator: (value) {
-            // if(TextFieldValidate().isNumericUsingRegularExpression(value.toString()) == false && value!.isNotEmpty) {
-            //   context.read<LoginProvider>().loginButtonStateChange(false);
-            //   return '숫자만 입력해 주세요';
-            // } else {
-            //   if(value!.length > 4) {
-            //     context.read<LoginProvider>().loginButtonStateChange(true);
-            //     return null;
-            //   } else if(value.isEmpty){
-            //     context.read<LoginProvider>().loginButtonStateChange(false);
-            //     return null;
-            //   } else {
-            //     context.read<LoginProvider>().loginButtonStateChange(false);
-            //     return '5자리의 숫자를 입력해 주세요';
-            //   }
-            // }
-          },
-          onChanged: (value) {
-            if(TextFieldValidate().isNumericUsingRegularExpression(value.toString()) == false && value!.isNotEmpty) {
-              buttonState = false;
-            } else {
-              if(value!.length > 4) {
-                buttonState = true;
-                inputNumber = loginFieldController.text;
-              } else if(value.isEmpty){
-                buttonState = false;
-              } else {
-                buttonState = false;
+    return Consumer<LoginProvider>(
+      builder: (context, data, child) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextFormField(
+              controller: loginFieldController,
+              autofocus: true,
+              focusNode: loginFieldFocusNode,
+              readOnly: false,
+              textInputAction: TextInputAction.next,
+              autovalidateMode: AutovalidateMode.always,
+              maxLines: 1,
+              maxLength: 5,
+              textAlignVertical: TextAlignVertical.center,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                counterText: '',
+                focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: data.validateContent.isEmpty ? const Color(0xFF3E97FF) : Colors.red, width: 1)),
+                focusedErrorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red, width: 1)),
+                errorBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.red, width: 1)),
+                filled: true,
+                fillColor: const Color(0xFFF6F6F6),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                alignLabelWithHint: false,
+                labelText: '로그인 번호',
+                labelStyle: TextStyle(fontSize: 12, color: data.validateContent.isEmpty ? const Color(0xFF3E97FF) : Colors.red, fontWeight: FontWeight.w500),
+                hintText: '로그인 번호를 입력해 주세요',
+                hintStyle: const TextStyle(fontSize: 14, color: Colors.grey, fontWeight: FontWeight.w400),
+                border: InputBorder.none,
+              ),
+              onChanged: (value) {
+                if(TextFieldValidate().isNumericUsingRegularExpression(value.toString()) == false && value!.isNotEmpty) {
+                  context.read<LoginProvider>().loginInputFieldValidateChange('숫자만 입력해 주세요', '');
+                } else {
+                  if(value!.length > 4) {
+                    context.read<LoginProvider>().loginInputFieldValidateChange('', loginFieldController.text);
+                  } else if(value.isEmpty){
+                    context.read<LoginProvider>().loginInputFieldValidateChange('', '');
+                  } else {
+                    context.read<LoginProvider>().loginInputFieldValidateChange('5자리의 숫자를 입력해 주세요', '');
+                  }
+                }
               }
-            }
-            context.read<LoginProvider>().loginButtonStateChange(buttonState, inputNumber);
-          }
-      ),
+          ),
+        );
+      }
+    );
+  }
+}
+
+class LoginInputFieldValidate extends StatelessWidget {
+  const LoginInputFieldValidate({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<LoginProvider>(
+      builder: (context, data, child) {
+        if(data.validateContent.isEmpty) {
+          return const SizedBox.shrink();
+        } else {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(data.validateContent, style: const TextStyle(fontSize: 10, color: Colors.red))),
+          );
+        }
+      }
     );
   }
 }
@@ -159,7 +169,7 @@ class _LoginButtonState extends State<LoginButton> {
             ),
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 20.0),
-              height: 55,
+              height: 55.0,
               child: const Center(
                 child: Text('로그인'),
               ),
@@ -195,7 +205,7 @@ class _LogoutFieldState extends State<LogoutField> {
         ),
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 20.0),
-          height: 55,
+          height: 55.0,
           child: const Center(
             child: Text('로그아웃'),
           ),

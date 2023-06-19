@@ -12,13 +12,13 @@ class _VideoPlayViewState extends State<VideoPlayView> {
   
   late VideoPlayerController videoPlayerController;
   late Future<void> initializeVideoPlayerFuture;
+
+  List<String> videoPath = ['assets/mp4/ad_video1.mp4', 'assets/mp4/ad_video2.mp4'];
+  int videoIndex = 0;
   
   @override
   void initState() {
-    videoPlayerController = VideoPlayerController.asset('assets/mp4/ad_video1.mp4');
-    initializeVideoPlayerFuture = videoPlayerController.initialize();
-    videoPlayerController.setLooping(true);
-    videoPlayerController.play();
+    videoInitialize();
     super.initState();
   }
 
@@ -26,6 +26,27 @@ class _VideoPlayViewState extends State<VideoPlayView> {
   void dispose() {
     videoPlayerController.dispose();
     super.dispose();
+  }
+
+  void videoInitialize() {
+    print(videoIndex);
+    if(videoIndex > 1) {
+      videoPlayerController.pause();
+    } else {
+
+      videoPlayerController = VideoPlayerController.asset(videoPath.elementAt(videoIndex));
+      initializeVideoPlayerFuture = videoPlayerController.initialize();
+      videoPlayerController.setLooping(false);
+
+      videoPlayerController.addListener(() {
+        if(videoPlayerController.value.isPlaying) {
+        } else {
+          setState(() {});
+        }
+      });
+      videoPlayerController.play();
+      videoIndex++;
+    }
   }
   
   @override

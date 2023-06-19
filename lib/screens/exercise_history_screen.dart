@@ -10,6 +10,8 @@ class ExerciseHistoryScreen extends StatefulWidget {
 class _ExerciseHistoryScreenState extends State<ExerciseHistoryScreen> {
   @override
   Widget build(BuildContext context) {
-    return Container(color: Colors.red);
+    return const Center(
+      child: Text('no data'),
+    );
   }
 }

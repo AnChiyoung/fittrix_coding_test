@@ -1,3 +1,4 @@
+import 'package:fittrix_coding_test/provider/exercise_provider.dart';
 import 'package:fittrix_coding_test/provider/login_provider.dart';
 import 'package:fittrix_coding_test/screens/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => LoginProvider()),
+        ChangeNotifierProvider(create: (_) => ExerciseProvider()),
       ],
       child: const MyApp(),
     ),

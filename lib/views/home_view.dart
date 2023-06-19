@@ -1,5 +1,6 @@
 import 'package:fittrix_coding_test/constants/login_guide.dart';
 import 'package:fittrix_coding_test/models/login_model.dart';
+import 'package:fittrix_coding_test/provider/exercise_provider.dart';
 import 'package:fittrix_coding_test/provider/login_provider.dart';
 import 'package:fittrix_coding_test/screens/exercise_history_screen.dart';
 import 'package:fittrix_coding_test/screens/exercise_record_screen.dart';
@@ -18,8 +19,7 @@ class MovePageList {
 }
 
 class BottomMenu extends StatefulWidget {
-  Function selectPageCallback;
-  BottomMenu({super.key, required this.selectPageCallback});
+  const BottomMenu({super.key});
 
   @override
   State<BottomMenu> createState() => _BottomMenuState();
@@ -38,7 +38,7 @@ class _BottomMenuState extends State<BottomMenu> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 80,
+      height: 80.0,
       child: BottomNavigationBar(
         elevation: 0.0,
         items: bottomNavigationMenu,
@@ -49,7 +49,7 @@ class _BottomMenuState extends State<BottomMenu> {
         showSelectedLabels: false,
         showUnselectedLabels: false,
         onTap: (index) {
-          if(index == 0 || index == 1) {
+          if(index == 0) {
             if(LoginToken.loginToken.isEmpty) {
               showDialog(
                   context: context,
@@ -59,21 +59,27 @@ class _BottomMenuState extends State<BottomMenu> {
                   }
               );
             } else {
-              widget.selectPageCallback(index);
-              pageIndex = index;
-              context.read<LoginProvider>().loginButtonStateChange(false, '');
+              context.read<LoginProvider>().loginButtonStateFalse();
             }
-          } else {
-            widget.selectPageCallback(index);
-            pageIndex = index;
+          } else if(index == 1) {
+            if(LoginToken.loginToken.isEmpty) {
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) {
+                    return LoginGuide(loginState: false);
+                  }
+              );
+            } else {
+              context.read<ExerciseProvider>().selectRecordIndex(2, -1);
+              context.read<LoginProvider>().loginButtonStateFalse();
+            }
+          } else if(index == 2){
+            context.read<ExerciseProvider>().selectRecordIndex(3, -1);
           }
         },
       ),
     );
-  }
-
-  void selectRecordType(int index) {
-    print(index);
   }
 
   List<BottomNavigationBarItem> bottomNavigationMenu = [
@@ -91,8 +97,7 @@ enum RecordType {
 }
 
 class ExerciseRecordPopupButton extends StatefulWidget {
-  // Function selectCallback;
-  ExerciseRecordPopupButton({super.key, });
+  const ExerciseRecordPopupButton({super.key});
 
   @override
   State<ExerciseRecordPopupButton> createState() => _ExerciseRecordPopupButtonState();
@@ -110,33 +115,44 @@ class _ExerciseRecordPopupButtonState extends State<ExerciseRecordPopupButton> {
         offset: Offset(15.0, bottomHeight),
         itemBuilder: (_) {
           return [
-            popupItemRow(RecordType.exercise01.toString()),
-            popupItemRow(RecordType.exercise02.toString()),
-            popupItemRow(RecordType.exercise03.toString()),
-            popupItemRow(RecordType.exercise04.toString()),
+            popupItemRow(0),
+            popupItemRow(1),
+            popupItemRow(2),
+            popupItemRow(3),
           ];
         },
         icon: const Text('운동 기록 하기'),
         onSelected: (value) {
-          // widget.selectCallback(value);
+          if(LoginToken.loginToken.isEmpty) {
+            showDialog(
+                context: context,
+                barrierDismissible: false,
+                builder: (context) {
+                  return LoginGuide(loginState: false);
+                }
+            );
+          } else {
+            context.read<ExerciseProvider>().selectRecordIndex(1, value);
+          }
+          // context.read<ExerciseProvider>().selectRecordIndex(1, value);
         }
       ),
     );
   }
 
-  PopupMenuItem popupItemRow(String title) {
+  PopupMenuItem popupItemRow(int title) {
     String setTitle = '';
-    if(title == RecordType.exercise01.toString()) {
+    if(title == 0) {
       setTitle = '런지';
-    } else if(title == RecordType.exercise02.toString()) {
+    } else if(title == 1) {
       setTitle = '스쿼트';
-    } else if(title == RecordType.exercise03.toString()) {
+    } else if(title == 2) {
       setTitle = '푸시업';
-    } else if(title == RecordType.exercise04.toString()) {
+    } else if(title == 3) {
       setTitle = '레그 레이즈';
     }
 
-    return PopupMenuItem<String>(
+    return PopupMenuItem<int>(
       value: title,
       child: Text(setTitle),
     );

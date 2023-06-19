@@ -5,15 +5,21 @@ class LoginProvider with ChangeNotifier {
   bool get loginButtonState => _loginButtonState;
   String _loginInputNumber = '';
   String get loginInputNumber => _loginInputNumber;
+  String _validateContent = '';
+  String get validateContent => _validateContent;
+  bool _loginState = false;
+  bool get loginState => _loginState;
 
-  void loginButtonStateChange(bool state, String inputNumber) {
-    _loginButtonState = state;
-    inputNumber.isEmpty ? {} : _loginInputNumber = inputNumber;
+  void loginInputFieldValidateChange(String validateContent, String inputNumber) {
+    inputNumber.isEmpty ? {_validateContent = validateContent, _loginButtonState = false} : {_validateContent = '', _loginInputNumber = inputNumber, _loginButtonState = true};
     notifyListeners();
   }
 
-  bool _loginState = false;
-  bool get loginState => _loginState;
+  void loginButtonStateFalse() {
+    _loginButtonState = false;
+    _loginInputNumber = '';
+    notifyListeners();
+  }
 
   void logintStateChange(bool state) {
     _loginState = state;
