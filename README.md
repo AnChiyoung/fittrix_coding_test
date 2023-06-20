@@ -27,7 +27,7 @@
      (mock api기에 로직보다는 기능의 동작 여부 정도만을 가늠하도록 설계)
    - response model은 login의 성공여부에 대한 메시지와 login의 유지를 위한 token만으로 간략하게 구성
    - response json field name : 'data' - 'message' + 'login_token'
-   - 추후 개선한다면 'data' - 'user' + 'message' + 'login_token' + 'login_activetime'
+   - 추후 개선한다면 'data' - 'user' + 'message' + 'login_token' + 'login_activetime',
                   'user' - 'id' + 'name' + 'profile' 정도로 개선하고자 함
 
 ## 개발 환경
